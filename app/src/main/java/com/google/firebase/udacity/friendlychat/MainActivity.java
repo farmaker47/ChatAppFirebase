@@ -232,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent a = new Intent(MainActivity.this,AllMessages.class);
+                a.putExtra("myUsername",mUsername);
                 startActivity(a);
             }
         });

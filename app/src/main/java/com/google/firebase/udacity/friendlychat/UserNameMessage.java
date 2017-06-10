@@ -6,18 +6,18 @@ package com.google.firebase.udacity.friendlychat;
 
 public class UserNameMessage {
 
-    private String mText;
+    private String text;
 
     public UserNameMessage(){
 
     }
 
     public UserNameMessage (String text){
-        mText=text;
+        text=text;
     }
 
     public String getText() {
-        return mText;
+        return text;
     }
 
 
