@@ -42,7 +42,7 @@ public class AllMessages extends AppCompatActivity {
         Log.e("AllMessages",str);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(str);
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(str).child(str + " -> " + str);
         /*mMessagesDatabaseReference = mFirebaseDatabase.getReference();*/
         Log.e("referenAllMessages",mMessagesDatabaseReference.toString());
 

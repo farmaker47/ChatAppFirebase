@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
     //A class that reference to spesific part of database
     private DatabaseReference mMessagesDatabaseReference;
+    private DatabaseReference mMessagesDatabaseReferenceName;
 
     //Child event listener to understand that has new messages
     private ChildEventListener mChildEventListener;
@@ -180,11 +181,12 @@ public class MainActivity extends AppCompatActivity {
                 //Creating a message
                 FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, mUsername + " -> " + mUsername, null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
-                mMessagesDatabaseReference.push().setValue(friendlyMessage);
+                mMessagesDatabaseReference.child(mUsername + " -> " + mUsername).push().setValue(friendlyMessage);
 
 
                 // Clear input box
                 mMessageEditText.setText("");
+
             }
         });
 
@@ -234,6 +236,13 @@ public class MainActivity extends AppCompatActivity {
                 Intent a = new Intent(MainActivity.this, AllMessages.class);
                 a.putExtra("myUsername", mUsername);
                 startActivity(a);
+
+                //dettach the event listener so not to create duplicates
+                if (mChildEventListener != null) {
+                    mMessagesDatabaseReferenceName.removeEventListener(mChildEventListener);
+                    mChildEventListener = null;
+                }
+
             }
         });
     }
@@ -265,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, mUsername + " -> " + mUsername, downloadUrl.toString());
-                    mMessagesDatabaseReference.push().setValue(friendlyMessage);
+                    mMessagesDatabaseReference.child(mUsername + " -> " + mUsername).push().setValue(friendlyMessage);
                 }
             });
 
@@ -313,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
         mUsername = username;
         //after log in then we take the name and we create a new node for the messages based on the username
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
+        mMessagesDatabaseReferenceName = mFirebaseDatabase.getReference().child(mUsername).child(mUsername + " -> " + mUsername);
         Log.e("referenCE", mMessagesDatabaseReference.toString());
         attachDatabaseReadListener();
     }
@@ -354,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
-            mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+            mMessagesDatabaseReferenceName.addChildEventListener(mChildEventListener);
         }
 
     }
