@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private ImageButton mPhotoPickerButton;
     private EditText mMessageEditText;
-    private Button mSendButton;
+    private Button mSendButton,mButtonToMessages;
 
     private String mUsername;
 
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     //A class that reference to spesific part of database
     private DatabaseReference mMessagesDatabaseReference;
 
-    //Child event istener to understand that has new messages
+    //Child event listener to understand that has new messages
     private ChildEventListener mChildEventListener;
 
     //instance of Firebase auth
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     //variable fr auth state listener
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    //instance of firebase sstorage
+    //instance of firebase storage
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mChatPhotosStorageReference;
 
@@ -128,11 +128,14 @@ public class MainActivity extends AppCompatActivity {
         mPhotoPickerButton = (ImageButton) findViewById(R.id.photoPickerButton);
         mMessageEditText = (EditText) findViewById(R.id.messageEditText);
         mSendButton = (Button) findViewById(R.id.sendButton);
+        mButtonToMessages = (Button) findViewById(R.id.buttonToMessages);
+
 
         // Initialize message ListView and its adapter
         List<FriendlyMessage> friendlyMessages = new ArrayList<>();
         mMessageAdapter = new MessageAdapter(this, R.layout.item_message, friendlyMessages);
         mMessageListView.setAdapter(mMessageAdapter);
+
 
         // Initialize progress bar
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
@@ -173,10 +176,12 @@ public class MainActivity extends AppCompatActivity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 //Creating a message
                 FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference.push().setValue(friendlyMessage);
+
 
                 // Clear input box
                 mMessageEditText.setText("");
@@ -188,9 +193,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-
-
-
 
                 if (user != null) {
 
@@ -225,6 +227,14 @@ public class MainActivity extends AppCompatActivity {
         defaultConfigMap.put(FRIENDLY_MSG_LENGTH_KEY, DEFAULT_MSG_LENGTH_LIMIT);
         mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
         fetchConfig();
+
+        mButtonToMessages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent a = new Intent(MainActivity.this,AllMessages.class);
+                startActivity(a);
+            }
+        });
     }
 
     @Override
@@ -302,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
         mUsername = username;
         //after log in then we take the name and we create a new node for the messages based on the username
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername + " -> " + mUsername);
+        Log.e("referenCE",mMessagesDatabaseReference.toString());
         attachDatabaseReadListener();
     }
 

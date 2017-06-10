@@ -52,6 +52,13 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/buttonToMessages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="list of messages"
+        />
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
