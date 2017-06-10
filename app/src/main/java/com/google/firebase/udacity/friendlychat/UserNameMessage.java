@@ -6,18 +6,21 @@ package com.google.firebase.udacity.friendlychat;
 
 public class UserNameMessage {
 
-    private String text;
+    private String nameToName;
 
     public UserNameMessage(){
-
     }
 
-    public UserNameMessage (String text){
-        text=text;
+    public UserNameMessage (String nameToName){
+        this.nameToName=nameToName;
     }
 
-    public String getText() {
-        return text;
+    public String getnameToName() {
+        return nameToName;
+    }
+
+    public void setNameToName (String nameToName){
+        this.nameToName = nameToName;
     }
 
 

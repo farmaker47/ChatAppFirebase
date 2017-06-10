@@ -42,23 +42,21 @@ public class AllMessages extends AppCompatActivity {
         Log.e("AllMessages",str);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(str + " -> " + str);
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(str);
+        /*mMessagesDatabaseReference = mFirebaseDatabase.getReference();*/
+        Log.e("referenAllMessages",mMessagesDatabaseReference.toString());
 
         // Initialize message ListView and its adapter
         List<UserNameMessage> userNameMessages = new ArrayList<>();
         mMessageAdapter = new AllMessagesAdapter(this, R.layout.item_all_message, userNameMessages);
         mMessageListView.setAdapter(mMessageAdapter);
 
-
-
-
-
-
-        onSignedInInitialize(str + " -> " + str);
+        /*onInitialize(str + " -> " + str);*/
+        attachDatabaseReadListener();
 
     }
 
-    private void onSignedInInitialize(String username) {
+    private void onInitialize(String username) {
         /*mUsername = username;
         //after log in then we take the name and we create a new node for the messages based on the username
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername + " -> " + mUsername);
@@ -70,10 +68,11 @@ public class AllMessages extends AppCompatActivity {
         if (mChildEventListener == null) {
             // Child event listener
             mChildEventListener = new ChildEventListener() {
+
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    UserNameMessage friendlyMessage = dataSnapshot.getValue(UserNameMessage.class);
-                    mMessageAdapter.add(friendlyMessage);
+                    UserNameMessage usersMessage = dataSnapshot.getValue(UserNameMessage.class);
+                    mMessageAdapter.add(usersMessage);
                 }
 
                 @Override

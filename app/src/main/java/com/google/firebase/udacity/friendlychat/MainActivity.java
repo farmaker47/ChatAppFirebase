@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private ImageButton mPhotoPickerButton;
     private EditText mMessageEditText;
-    private Button mSendButton,mButtonToMessages;
+    private Button mSendButton, mButtonToMessages;
 
     private String mUsername;
 
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Creating a message
-                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, null);
+                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, mUsername + " -> " + mUsername, null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference.push().setValue(friendlyMessage);
 
@@ -231,8 +231,8 @@ public class MainActivity extends AppCompatActivity {
         mButtonToMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent a = new Intent(MainActivity.this,AllMessages.class);
-                a.putExtra("myUsername",mUsername);
+                Intent a = new Intent(MainActivity.this, AllMessages.class);
+                a.putExtra("myUsername", mUsername);
                 startActivity(a);
             }
         });
@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
+                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, mUsername + " -> " + mUsername, downloadUrl.toString());
                     mMessagesDatabaseReference.push().setValue(friendlyMessage);
                 }
             });
@@ -312,8 +312,8 @@ public class MainActivity extends AppCompatActivity {
     private void onSignedInInitialize(String username) {
         mUsername = username;
         //after log in then we take the name and we create a new node for the messages based on the username
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername + " -> " + mUsername);
-        Log.e("referenCE",mMessagesDatabaseReference.toString());
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
+        Log.e("referenCE", mMessagesDatabaseReference.toString());
         attachDatabaseReadListener();
     }
 

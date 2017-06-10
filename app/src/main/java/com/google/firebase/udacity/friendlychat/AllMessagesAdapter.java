@@ -33,7 +33,7 @@ public class AllMessagesAdapter extends ArrayAdapter<UserNameMessage> {
         UserNameMessage messages = getItem(position);
 
         dummyTextView.setText("User Messages");
-        messageTextView.setText(messages.getText());
+        messageTextView.setText(messages.getnameToName());
 
         return convertView;
 
