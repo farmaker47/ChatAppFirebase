@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -15,9 +18,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllMessages extends AppCompatActivity {
+public class StringUsernameMessages extends AppCompatActivity {
 
-    private AllMessagesAdapter mMessageAdapter;
+
+    private StringUsernameMessagesAdapter mMessageAdapter;
     private ListView mMessageListView;
 
     private String mUsername;
@@ -33,7 +37,7 @@ public class AllMessages extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_messages);
+        setContentView(R.layout.activity_string_username_messages);
 
         mMessageListView = (ListView)findViewById(R.id.allMessageListView);
 
@@ -43,26 +47,27 @@ public class AllMessages extends AppCompatActivity {
         Log.e("AllMessages",strUsername);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(strUsername).child(strPersonal);
-        /*mMessagesDatabaseReference = mFirebaseDatabase.getReference();*/
-        Log.e("referenAllMessages",mMessagesDatabaseReference.toString());
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(strUsername);
 
         // Initialize message ListView and its adapter
-        List<UserNameMessage> userNameMessages = new ArrayList<>();
-        mMessageAdapter = new AllMessagesAdapter(this, R.layout.item_all_message, userNameMessages);
+        List<String> userNameMessages = new ArrayList<>();
+        mMessageAdapter = new StringUsernameMessagesAdapter(this, R.layout.item_all_message, userNameMessages);
         mMessageListView.setAdapter(mMessageAdapter);
 
-        /*onInitialize(str + " -> " + str);*/
         attachDatabaseReadListener();
+        mMessageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-    }
+                TextView textView = (TextView) view.findViewById(R.id.allMessageTextView);
+                String text = textView.getText().toString();
 
-    private void onInitialize(String username) {
-        /*mUsername = username;
-        //after log in then we take the name and we create a new node for the messages based on the username
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername + " -> " + mUsername);
-        Log.e("referenCE",mMessagesDatabaseReference.toString());*/
-        attachDatabaseReadListener();
+                Intent a = new Intent(StringUsernameMessages.this, AfterPickingMessages.class);
+                a.putExtra("myUsername",mUsername);
+                a.putExtra("myPersonalMessages",text);
+                startActivity(a);
+            }
+        });
     }
 
     private void attachDatabaseReadListener() {
@@ -72,10 +77,17 @@ public class AllMessages extends AppCompatActivity {
 
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    UserNameMessage usersMessage = dataSnapshot.getValue(UserNameMessage.class);
+
+                   /* UserNameMessage usersMessage = dataSnapshot.getValue(UserNameMessage.class);
                     String datasnapshoti = dataSnapshot.getKey();
                     Log.e("datasnapsotAllMessages",datasnapshoti);
-                    mMessageAdapter.add(usersMessage);
+                    mMessageAdapter.add(usersMessage);*/
+
+
+
+                    String datasnapshoti = dataSnapshot.getKey();
+                    Log.e("datasnapsotAllMessages",datasnapshoti);
+                    mMessageAdapter.add(datasnapshoti);
                 }
 
                 @Override

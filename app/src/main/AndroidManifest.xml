@@ -19,7 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AllMessages"></activity>
+        <activity android:name=".AllMessages" />
+        <activity android:name=".StringUsernameMessages" />
+        <activity android:name=".AfterPickingMessages"></activity>
     </application>
 
 </manifest>

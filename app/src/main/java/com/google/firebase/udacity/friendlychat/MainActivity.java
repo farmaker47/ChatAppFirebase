@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     public static final String ANONYMOUS = "anonymous";
-    public static final String CHRIS = "chris";
+    public static final String CHRIS = "Maria Vakalopoulou";
 
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
     public static final String FRIENDLY_MSG_LENGTH_KEY = "friendly_message_length";
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     //A class that reference to spesific part of database
     private DatabaseReference mMessagesDatabaseReference;
+    private DatabaseReference mMessagesDatabaseReference2;
     private DatabaseReference mMessagesDatabaseReferenceName;
 
     //Child event listener to understand that has new messages
@@ -200,6 +201,10 @@ public class MainActivity extends AppCompatActivity {
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference.child(mUsername + " -> " + CHRIS).push().setValue(friendlyMessage);
 
+                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, CHRIS + " -> " + mUsername, null);
+                //The push method is exactly what you want to be using in this case because you need a new id generated for each message
+                mMessagesDatabaseReference2.child(CHRIS + " -> " + mUsername).push().setValue(friendlyMessage2);
+
 
                 // Clear input box
                 mMessageEditText.setText("");
@@ -272,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView textView = (TextView) view.findViewById(R.id.nameToNameTextView);
                 String text = textView.getText().toString();
 
-                Intent a = new Intent(MainActivity.this, AllMessages.class);
+                Intent a = new Intent(MainActivity.this, StringUsernameMessages.class);
                 a.putExtra("myUsername",mUsername);
                 a.putExtra("myPersonalMessages",text);
                 startActivity(a);
@@ -362,8 +367,9 @@ public class MainActivity extends AppCompatActivity {
         mUsername = username;
         //after log in then we take the name and we create a new node for the messages based on the username
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
+        mMessagesDatabaseReference2 = mFirebaseDatabase.getReference().child(CHRIS);
         mMessagesDatabaseReferenceName = mFirebaseDatabase.getReference().child(mUsername).child(mUsername + " -> " + CHRIS);
-        Log.e("referenCE", mMessagesDatabaseReference.toString());
+        Log.e("referenCE", mMessagesDatabaseReferenceName.toString());
         attachDatabaseReadListener();
     }
 
@@ -380,6 +386,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     FriendlyMessage friendlyMessage = dataSnapshot.getValue(FriendlyMessage.class);
+                    String datasnapshoti = dataSnapshot.getKey();
+                    Log.e("datasnapsot",datasnapshoti);
                     mMessageAdapter.add(friendlyMessage);
                 }
 
