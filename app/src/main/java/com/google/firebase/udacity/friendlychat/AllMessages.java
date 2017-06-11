@@ -38,11 +38,12 @@ public class AllMessages extends AppCompatActivity {
         mMessageListView = (ListView)findViewById(R.id.allMessageListView);
 
         Intent intent = getIntent();
-        String str = intent.getStringExtra("myUsername");
-        Log.e("AllMessages",str);
+        String strUsername = intent.getStringExtra("myUsername");
+        String strPersonal = intent.getStringExtra("myPersonalMessages");
+        Log.e("AllMessages",strUsername);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(str).child(str + " -> " + str);
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(strUsername).child(strPersonal);
         /*mMessagesDatabaseReference = mFirebaseDatabase.getReference();*/
         Log.e("referenAllMessages",mMessagesDatabaseReference.toString());
 

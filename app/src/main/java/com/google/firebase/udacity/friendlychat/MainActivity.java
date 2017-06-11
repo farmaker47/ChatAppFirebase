@@ -15,7 +15,11 @@
  */
 package com.google.firebase.udacity.friendlychat;
 
+import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,11 +32,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -63,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     public static final String ANONYMOUS = "anonymous";
+    public static final String CHRIS = "chris";
+
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
     public static final String FRIENDLY_MSG_LENGTH_KEY = "friendly_message_length";
 
@@ -105,6 +113,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Get details on the currently active default data
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        // If there is a network connection, fetch data
+        if (networkInfo == null) {
+            Toast.makeText(MainActivity.this, "No internet access!!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         mUsername = ANONYMOUS;
 
@@ -179,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Creating a message
-                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, mUsername + " -> " + mUsername, null);
+                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, mUsername + " -> " + CHRIS, null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
-                mMessagesDatabaseReference.child(mUsername + " -> " + mUsername).push().setValue(friendlyMessage);
+                mMessagesDatabaseReference.child(mUsername + " -> " + CHRIS).push().setValue(friendlyMessage);
 
 
                 // Clear input box
@@ -230,11 +247,34 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseRemoteConfig.setDefaults(defaultConfigMap);
         fetchConfig();
 
-        mButtonToMessages.setOnClickListener(new View.OnClickListener() {
+       /* mButtonToMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent a = new Intent(MainActivity.this, AllMessages.class);
                 a.putExtra("myUsername", mUsername);
+                startActivity(a);
+
+                //dettach the event listener so not to create duplicates
+                if (mChildEventListener != null) {
+                    mMessagesDatabaseReferenceName.removeEventListener(mChildEventListener);
+                    mChildEventListener = null;
+                }
+
+            }
+        });*/
+        mButtonToMessages.setVisibility(View.GONE);
+
+        mMessageListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //get the value of the 2 users textview to pass it in the next activity
+                TextView textView = (TextView) view.findViewById(R.id.nameToNameTextView);
+                String text = textView.getText().toString();
+
+                Intent a = new Intent(MainActivity.this, AllMessages.class);
+                a.putExtra("myUsername",mUsername);
+                a.putExtra("myPersonalMessages",text);
                 startActivity(a);
 
                 //dettach the event listener so not to create duplicates
@@ -322,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         mUsername = username;
         //after log in then we take the name and we create a new node for the messages based on the username
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(mUsername);
-        mMessagesDatabaseReferenceName = mFirebaseDatabase.getReference().child(mUsername).child(mUsername + " -> " + mUsername);
+        mMessagesDatabaseReferenceName = mFirebaseDatabase.getReference().child(mUsername).child(mUsername + " -> " + CHRIS);
         Log.e("referenCE", mMessagesDatabaseReference.toString());
         attachDatabaseReadListener();
     }
