@@ -280,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent a = new Intent(MainActivity.this, StringUsernameMessages.class);
                 a.putExtra("myUsername",mUsername);
                 a.putExtra("myPersonalMessages",text);
+                a.putExtra("secondName",CHRIS);
                 startActivity(a);
 
                 //dettach the event listener so not to create duplicates

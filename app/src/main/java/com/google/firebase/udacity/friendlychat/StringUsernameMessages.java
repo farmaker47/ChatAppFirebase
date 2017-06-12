@@ -42,8 +42,9 @@ public class StringUsernameMessages extends AppCompatActivity {
         mMessageListView = (ListView)findViewById(R.id.allMessageListView);
 
         Intent intent = getIntent();
-        String strUsername = intent.getStringExtra("myUsername");
+        final String strUsername = intent.getStringExtra("myUsername");
         String strPersonal = intent.getStringExtra("myPersonalMessages");
+        final String secondName = intent.getStringExtra("secondName");
         Log.e("AllMessages",strUsername);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -63,8 +64,9 @@ public class StringUsernameMessages extends AppCompatActivity {
                 String text = textView.getText().toString();
 
                 Intent a = new Intent(StringUsernameMessages.this, AfterPickingMessages.class);
-                a.putExtra("myUsername",mUsername);
+                a.putExtra("myUsername",strUsername);
                 a.putExtra("myPersonalMessages",text);
+                a.putExtra("secondName",secondName);
                 startActivity(a);
             }
         });
