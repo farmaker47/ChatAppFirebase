@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +29,7 @@ public class StringUsernameMessages extends AppCompatActivity {
     private String mUsername;
     private String string2;
 
+
     private FirebaseDatabase mFirebaseDatabase;
 
     //A class that reference to spesific part of database
@@ -43,6 +45,8 @@ public class StringUsernameMessages extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_string_username_messages);
+
+        string2 = "222";
 
         mMessageListView = (ListView) findViewById(R.id.allMessageListView);
 
@@ -91,6 +95,7 @@ public class StringUsernameMessages extends AppCompatActivity {
 
                             string2 = dataSnapshot.getKey();
                             Log.e("454545", string2);
+
                         }
 
                         @Override
@@ -115,6 +120,8 @@ public class StringUsernameMessages extends AppCompatActivity {
                     };
 
                     mMessagesDatabaseReference2.addChildEventListener(mChildEventListener2);
+
+
                 }
 
                 ////////
@@ -127,6 +134,7 @@ public class StringUsernameMessages extends AppCompatActivity {
                 a.putExtra("myPersonalMessages", text);
                 a.putExtra("secondName", secondName);
                 startActivity(a);
+
 
                 mChildEventListener2 =null;
                 /*mMessagesDatabaseReference2.addValueEventListener(new ValueEventListener() {
