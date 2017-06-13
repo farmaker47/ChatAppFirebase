@@ -37,6 +37,8 @@ public class AfterPickingMessages extends AppCompatActivity {
     private String strUsername;
     private String strPersonal;
     private String strSecondName;
+    private String strSecondNameAfter;
+    private String str4444;
 
     private ListView mMessageListView;
     private MessageAdapter mMessageAdapter;
@@ -44,6 +46,8 @@ public class AfterPickingMessages extends AppCompatActivity {
     private ImageButton mPhotoPickerButton;
     private EditText mMessageEditText;
     private Button mSendButton,mButtonToMessages;
+
+
 
     private FirebaseDatabase mFirebaseDatabase;
 
@@ -68,7 +72,14 @@ public class AfterPickingMessages extends AppCompatActivity {
         strUsername = intent.getStringExtra("myUsername");
         strPersonal = intent.getStringExtra("myPersonalMessages");
         strSecondName = intent.getStringExtra("secondName");
-        Log.e("AllMessages", strUsername+strPersonal+"333"+strSecondName);
+        str4444 = intent.getStringExtra("4444");
+        Log.e("AllMessages", strUsername+"--"+strPersonal+"--"+str4444+"333"+strSecondName);
+
+        if(strUsername.equals(strSecondName)){
+            strSecondNameAfter=str4444;
+        }
+
+        Log.e("AfterChange", strUsername+"--"+strPersonal+"--"+str4444+"333"+strSecondNameAfter);
 
         //Instantiating the database..access point of the database reference
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -76,7 +87,7 @@ public class AfterPickingMessages extends AppCompatActivity {
         //initializing the storage
         mFirebaseStorage = FirebaseStorage.getInstance();
 
-        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(strUsername).child(strPersonal);
+        mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(strUsername);
         mMessagesDatabaseReference2 = mFirebaseDatabase.getReference().child(strSecondName);
 
         //getting a reference of the messages node
@@ -142,12 +153,12 @@ public class AfterPickingMessages extends AppCompatActivity {
                 //Creating a message
                 FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
-                mMessagesDatabaseReference.push().setValue(friendlyMessage);
+                mMessagesDatabaseReference.child(strUsername + " -> " + strSecondName).child(strUsername).push().setValue(friendlyMessage);
 
 
                 FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strUsername + " -> " + strSecondName, null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
-                mMessagesDatabaseReference2.child(strUsername + " -> " + strSecondName).push().setValue(friendlyMessage2);
+                mMessagesDatabaseReference2.child(strUsername + " -> " + strSecondName).child(strUsername).push().setValue(friendlyMessage2);
 
 
 
@@ -180,7 +191,7 @@ public class AfterPickingMessages extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     FriendlyMessage friendlyMessage = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString());
-                    mMessagesDatabaseReference.push().setValue(friendlyMessage);
+                    mMessagesDatabaseReference.child(strUsername + " -> " + strSecondName).push().setValue(friendlyMessage);
 
                     FriendlyMessage friendlyMessage2 = new FriendlyMessage(null, strUsername, strUsername + " -> " + strSecondName, downloadUrl.toString());
                     //The push method is exactly what you want to be using in this case because you need a new id generated for each message
@@ -225,7 +236,7 @@ public class AfterPickingMessages extends AppCompatActivity {
                 }
             };
 
-            mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
+            mMessagesDatabaseReference.child(strUsername + " -> " + strSecondName).child(strUsername).addChildEventListener(mChildEventListener);
         }
 
     }
