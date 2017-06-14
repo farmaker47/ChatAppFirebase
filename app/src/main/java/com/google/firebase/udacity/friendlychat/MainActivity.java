@@ -197,11 +197,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Creating a message
-                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, mUsername + " -> " + CHRIS, null);
+                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, mUsername + " -> " + CHRIS, null,null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference.child(mUsername + " -> " + CHRIS).push().setValue(friendlyMessage);
 
-                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, CHRIS + " -> " + mUsername, null);
+                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, CHRIS + " -> " + mUsername, null,null);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference2.child(CHRIS + " -> " + mUsername).push().setValue(friendlyMessage2);
 
@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, mUsername + " -> " + mUsername, downloadUrl.toString());
+                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, mUsername + " -> " + mUsername, downloadUrl.toString(),null);
                     mMessagesDatabaseReference.child(mUsername + " -> " + mUsername).push().setValue(friendlyMessage);
                 }
             });

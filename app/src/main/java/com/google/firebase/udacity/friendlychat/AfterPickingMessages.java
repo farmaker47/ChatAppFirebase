@@ -28,7 +28,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AfterPickingMessages extends AppCompatActivity {
@@ -152,12 +155,12 @@ public class AfterPickingMessages extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Creating a message
-                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null);
+                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null,getTheDateTime());
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference.child(strPersonal).child(str4444).push().setValue(friendlyMessage);
 
 
-                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null);
+                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null,getTheDateTime());
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference2.child(strPersonal).child(str4444).push().setValue(friendlyMessage2);
 
@@ -192,11 +195,11 @@ public class AfterPickingMessages extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString());
+                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(),getTheDateTime());
                     mMessagesDatabaseReference.child(strPersonal).child(str4444).push().setValue(friendlyMessage);
 
 
-                    FriendlyMessage friendlyMessage2 = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString());
+                    FriendlyMessage friendlyMessage2 = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(),getTheDateTime());
                     //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                     mMessagesDatabaseReference2.child(strPersonal).child(str4444).push().setValue(friendlyMessage2);
 
@@ -244,5 +247,11 @@ public class AfterPickingMessages extends AppCompatActivity {
             mMessagesDatabaseReference.child(strPersonal).child(str4444).addChildEventListener(mChildEventListener);
         }
 
+    }
+
+    private String getTheDateTime(){
+        DateFormat df = new SimpleDateFormat("EEE, d MMM, HH:mm");
+        String date = df.format(Calendar.getInstance().getTime());
+        return date;
     }
 }
