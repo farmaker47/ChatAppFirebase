@@ -53,6 +53,7 @@ public class AfterPickingMessages extends AppCompatActivity {
     private String strSecondName;
     private String strSecondNameAfter;
     private String str4444;
+    private boolean isReaded;
 
     private ListView mMessageListView;
     private MessageAdapter mMessageAdapter;
@@ -80,6 +81,8 @@ public class AfterPickingMessages extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        isReaded = false;
 
         /*Intent intent = getIntent();
         strUsername = intent.getStringExtra("myUsername");
@@ -171,12 +174,12 @@ public class AfterPickingMessages extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Creating a message
-                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null, getTheDateTime());
+                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null, getTheDateTime(),isReaded);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference.child(strPersonal).child(str4444).push().setValue(friendlyMessage);
 
 
-                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null, getTheDateTime());
+                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null, getTheDateTime(),isReaded);
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference2.child(strPersonal).child(str4444).push().setValue(friendlyMessage2);
 
@@ -211,11 +214,13 @@ public class AfterPickingMessages extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(), getTheDateTime());
+
+                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(), getTheDateTime(),isReaded);
+
                     mMessagesDatabaseReference.child(strPersonal).child(str4444).push().setValue(friendlyMessage);
 
 
-                    FriendlyMessage friendlyMessage2 = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(), getTheDateTime());
+                    FriendlyMessage friendlyMessage2 = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(), getTheDateTime(),isReaded);
                     //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                     mMessagesDatabaseReference2.child(strPersonal).child(str4444).push().setValue(friendlyMessage2);
 
@@ -234,23 +239,26 @@ public class AfterPickingMessages extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     FriendlyMessage friendlyMessage = dataSnapshot.getValue(FriendlyMessage.class);
+
+                    //to use it for notifications
+                    String valueOfRead = dataSnapshot.child("/isReaded").getKey();
+                    /////
                     String datasnapshoti = dataSnapshot.getKey();
                     Log.e("datasnapsot", datasnapshoti);
+                    ////
+                    friendlyMessage.setIsReaded(true);
                     mMessageAdapter.add(friendlyMessage);
 
 
                     /////////
-                    ////////
+                    ////////we give strPersonal new value so the notification transfer us to the correct messages
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(AfterPickingMessages.this);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("myPersonalMessages", strPersonal);
-                   /* editor.putString("4444", string2);
-                    editor.putString("myUsername", strUsername);
-                    editor.putString("secondName", secondName);*/
                     editor.commit();
 
 
-                    if (!friendlyMessage.getName().equals(strUsername)) {
+                    if (!friendlyMessage.getName().equals(strUsername) && valueOfRead.equals("false")) {
 
                         int notifyID = 1;
 
@@ -327,6 +335,18 @@ public class AfterPickingMessages extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        //solution if you want to immediatelly go back to SimpleUsernameMessages
+        /*Intent backIntent = new Intent(AfterPickingMessages.this,StringUsernameMessages.class);
+        backIntent.putExtra("myUsername", strUsername);
+        backIntent.putExtra("secondName", strSecondName);
+        startActivity(backIntent);*/
 
     }
 

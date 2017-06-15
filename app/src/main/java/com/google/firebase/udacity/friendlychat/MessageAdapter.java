@@ -28,6 +28,7 @@ public class MessageAdapter extends ArrayAdapter<FriendlyMessage> {
         TextView messageTextView = (TextView) convertView.findViewById(R.id.messageTextView);
         TextView authorTextView = (TextView) convertView.findViewById(R.id.nameTextView);
         TextView timeTextView = (TextView) convertView.findViewById(R.id.timeTextView);
+        TextView readedTextView = (TextView) convertView.findViewById(R.id.isReadTextView);
 
         /*TextView nameToNameTextView = (TextView) convertView.findViewById(R.id.nameToNameTextView);*/
 
@@ -48,6 +49,12 @@ public class MessageAdapter extends ArrayAdapter<FriendlyMessage> {
         authorTextView.setText(message.getName());
         timeTextView.setText(message.getTime());
         /*nameToNameTextView.setText(message.getNameToName());*/
+
+        if(message.getIsReaded()== false){
+            readedTextView.setText("Delivered");
+        }else{
+            readedTextView.setText("Readed");
+        }
 
         return convertView;
     }

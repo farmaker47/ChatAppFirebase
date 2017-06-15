@@ -22,16 +22,19 @@ public class FriendlyMessage {
     private String photoUrl;
     private String nameToName;
     private String time;
+    private boolean isReaded;
 
     public FriendlyMessage() {
     }
 
-    public FriendlyMessage(String text, String name, String nameToName, String photoUrl, String time) {
+    public FriendlyMessage(String text, String name, String nameToName, String photoUrl, String time, boolean isreaded) {
         this.text = text;
         this.name = name;
         this.photoUrl = photoUrl;
         this.nameToName = nameToName;
         this.time = time;
+        this.isReaded = isreaded;
+
     }
 
     public String getText() {
@@ -72,5 +75,13 @@ public class FriendlyMessage {
 
     public void setTime(String time){
         this.time = time;
+    }
+
+    public boolean getIsReaded(){
+        return isReaded;
+    }
+
+    public void setIsReaded(boolean isreaded){
+        this.isReaded = isreaded;
     }
 }
