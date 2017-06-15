@@ -1,9 +1,16 @@
 package com.google.firebase.udacity.friendlychat;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -36,10 +43,12 @@ import java.util.List;
 
 public class AfterPickingMessages extends AppCompatActivity {
 
+    private Context mContext;
+
     private static final int RC_PHOTO_PICKER = 2;
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
 
-    private String strUsername;
+    private String strUsername = null;
     private String strPersonal;
     private String strSecondName;
     private String strSecondNameAfter;
@@ -72,11 +81,18 @@ public class AfterPickingMessages extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = getIntent();
+        /*Intent intent = getIntent();
         strUsername = intent.getStringExtra("myUsername");
         strPersonal = intent.getStringExtra("myPersonalMessages");
         strSecondName = intent.getStringExtra("secondName");
-        str4444 = intent.getStringExtra("4444");
+        str4444 = intent.getStringExtra("4444");*/
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);;
+        strUsername = sharedPref.getString("myUsername",null);
+        strPersonal = sharedPref.getString("myPersonalMessages",null);
+        strSecondName = sharedPref.getString("secondName",null);
+        str4444 = sharedPref.getString("4444",null);
+
         Log.e("AllMessages", strUsername + "--" + strPersonal + "--" + str4444 + "--333--" + strSecondName);
 
         if (strUsername.equals(strSecondName)) {
@@ -155,12 +171,12 @@ public class AfterPickingMessages extends AppCompatActivity {
             public void onClick(View view) {
 
                 //Creating a message
-                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null,getTheDateTime());
+                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null, getTheDateTime());
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference.child(strPersonal).child(str4444).push().setValue(friendlyMessage);
 
 
-                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null,getTheDateTime());
+                FriendlyMessage friendlyMessage2 = new FriendlyMessage(mMessageEditText.getText().toString(), strUsername, strPersonal, null, getTheDateTime());
                 //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                 mMessagesDatabaseReference2.child(strPersonal).child(str4444).push().setValue(friendlyMessage2);
 
@@ -195,11 +211,11 @@ public class AfterPickingMessages extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(),getTheDateTime());
+                    FriendlyMessage friendlyMessage = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(), getTheDateTime());
                     mMessagesDatabaseReference.child(strPersonal).child(str4444).push().setValue(friendlyMessage);
 
 
-                    FriendlyMessage friendlyMessage2 = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(),getTheDateTime());
+                    FriendlyMessage friendlyMessage2 = new FriendlyMessage(null, strUsername, strPersonal, downloadUrl.toString(), getTheDateTime());
                     //The push method is exactly what you want to be using in this case because you need a new id generated for each message
                     mMessagesDatabaseReference2.child(strPersonal).child(str4444).push().setValue(friendlyMessage2);
 
@@ -221,6 +237,65 @@ public class AfterPickingMessages extends AppCompatActivity {
                     String datasnapshoti = dataSnapshot.getKey();
                     Log.e("datasnapsot", datasnapshoti);
                     mMessageAdapter.add(friendlyMessage);
+
+
+                    /////////
+                    ////////
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(AfterPickingMessages.this);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("myPersonalMessages", strPersonal);
+                   /* editor.putString("4444", string2);
+                    editor.putString("myUsername", strUsername);
+                    editor.putString("secondName", secondName);*/
+                    editor.commit();
+
+
+                    if (!friendlyMessage.getName().equals(strUsername)) {
+
+                        int notifyID = 1;
+
+                        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(AfterPickingMessages.this)
+                                .setSmallIcon(R.drawable.ic_launcher)
+                                .setContentTitle("Message from:\n " + strSecondName)
+                                .setContentText(friendlyMessage.getText())
+                                .setOnlyAlertOnce(true)
+                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+                        mBuilder.setAutoCancel(true);
+                        mBuilder.setLocalOnly(false);
+
+                        Intent resultIntent = new Intent(AfterPickingMessages.this, AfterPickingMessages.class);
+
+
+                        resultIntent.setAction("android.intent.action.MAIN");
+                        resultIntent.addCategory("android.intent.category.LAUNCHER");
+
+                        PendingIntent resultPendingIntent = PendingIntent.getActivity(AfterPickingMessages.this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                        //building the notification
+                        mBuilder.setContentIntent(resultPendingIntent);
+
+
+
+
+
+
+                        /*TaskStackBuilder stackBuilder = TaskStackBuilder.create(AfterPickingMessages.this);
+                        // Adds the back stack for the Intent (but not the Intent itself)
+                        stackBuilder.addParentStack(AfterPickingMessages.class);
+                        // Adds the Intent that starts the Activity to the top of the stack
+                        stackBuilder.addNextIntent(resultIntent);
+                        PendingIntent resultPendingIntent =
+                                stackBuilder.getPendingIntent(
+                                        0,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                );
+                        mBuilder.setContentIntent(resultPendingIntent);*/
+
+
+                        mNotificationManager.notify(notifyID, mBuilder.build());
+                    }
                 }
 
                 @Override
@@ -249,7 +324,13 @@ public class AfterPickingMessages extends AppCompatActivity {
 
     }
 
-    private String getTheDateTime(){
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    private String getTheDateTime() {
         DateFormat df = new SimpleDateFormat("EEE, d MMM, HH:mm");
         String date = df.format(Calendar.getInstance().getTime());
         return date;

@@ -1,7 +1,10 @@
 package com.google.firebase.udacity.friendlychat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,12 +25,13 @@ import java.util.List;
 
 public class StringUsernameMessages extends AppCompatActivity {
 
+    private Context mContext;
+    StringUsernameMessages stringUsernameMessagesContext = (StringUsernameMessages) mContext;
 
     private StringUsernameMessagesAdapter mMessageAdapter;
     private ListView mMessageListView;
 
-    private String mUsername;
-    private String string2;
+    private String string2 = null;
 
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -46,6 +50,7 @@ public class StringUsernameMessages extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_string_username_messages);
 
+
         string2 = "222";
 
         mMessageListView = (ListView) findViewById(R.id.allMessageListView);
@@ -55,6 +60,17 @@ public class StringUsernameMessages extends AppCompatActivity {
         String strPersonal = intent.getStringExtra("myPersonalMessages");
         final String secondName = intent.getStringExtra("secondName");
         Log.e("AllMessages", strUsername+secondName);
+
+        ///////
+        /////
+        string2 = "222";
+        /*SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("4444", "george soloupis");
+        editor.putString("myUsername", strUsername);
+        editor.putString("myPersonalMessages", "george soloupis -> Maria Vakalopoulou");
+        editor.putString("secondName", secondName);
+        editor.commit();*/
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child(strUsername);
@@ -128,15 +144,35 @@ public class StringUsernameMessages extends AppCompatActivity {
                 ///////
                 //////
 
-                Intent a = new Intent(StringUsernameMessages.this, AfterPickingMessages.class);
-                a.putExtra("4444", string2);
-                a.putExtra("myUsername", strUsername);
-                a.putExtra("myPersonalMessages", text);
-                a.putExtra("secondName", secondName);
-                startActivity(a);
+
+
+
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(StringUsernameMessages.this);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("4444", string2);
+                editor.putString("myUsername", strUsername);
+                editor.putString("myPersonalMessages", text);
+                editor.putString("secondName", secondName);
+                editor.commit();
+
+                /*SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(StringUsernameMessages.this);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("4444", "george soloupis");
+                editor.putString("myUsername", strUsername);
+                editor.putString("myPersonalMessages", "george soloupis -> Maria Vakalopoulou");
+                editor.putString("secondName", secondName);
+                editor.commit();*/
 
 
                 mChildEventListener2 =null;
+
+                Intent a = new Intent(StringUsernameMessages.this, AfterPickingMessages.class);
+                /*a.putExtra("4444", string2);
+                a.putExtra("myUsername", strUsername);
+                a.putExtra("myPersonalMessages", text);
+                a.putExtra("secondName", secondName);*/
+                startActivity(a);
+
                 /*mMessagesDatabaseReference2.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
